@@ -326,7 +326,7 @@ Logic_Speed(ThisHotkey)
 ; 过帧
 Logic_Double(ThisHotkey)
 {
-    Sleep 5
+    Sleep 1
     Action_Pause()
     Sleep 10
     Action_Pause()
@@ -335,11 +335,15 @@ Logic_Double(ThisHotkey)
 ; 选人
 Logic_Select(ThisHotkey)
 {
-    Sleep 5
-    Action_Pause()
-    Sleep 5
-    Click
-    Sleep 5
+    Sleep 1
+    Click "down"
+    Sleep 1
+    Send "{" Game_Pause " down}"
+    Sleep 1
+    Click "up"
+    Sleep 0
+    Send "{" Game_Pause " up}"
+    Sleep 1
     Action_Pause()
 }
 
@@ -401,6 +405,35 @@ ShowStartupPanel()
 ; 调用显示面板
 ShowStartupPanel()
 
+
+; ==============================================================================
+; [新增] 退出提示面板 (UI)
+; ==============================================================================
+ShowExitPanel()
+{
+    ; 创建无边框 GUI
+    UI := Gui("+AlwaysOnTop -Caption +ToolWindow +Owner", "脚本退出")
+    UI.BackColor := "1E1E1E"  ; 深色背景
+    
+    ; 标题 (使用淡红色强调退出状态)
+    UI.SetFont("s12 w700 cFF6666", "Microsoft YaHei")
+    UI.Add("Text", "Center w250", "👋 脚本即将退出...")
+    
+    ; 分隔线
+    UI.SetFont("s8 cGray")
+    UI.Add("Text", "Center w250 y+5", "--------------------------------")
+    
+    ; 提示信息
+    UI.SetFont("s10 cWhite")
+    UI.Add("Text", "Center w250 y+10", "功能已停止")
+
+    ; 显示窗口 (居中显示)
+    UI.Show("NoActivate AutoSize")
+    
+    ; 【重要】强制等待 1.2 秒，让用户看清提示后再关闭进程
+    Sleep 1200
+}
+
 ; ==============================================================================
 ; 5. 全局控制逻辑
 ; ==============================================================================
@@ -421,6 +454,8 @@ Global_ShowUI(ThisHotkey)
 
 Global_Exit(ThisHotkey)
 {
+    Critical "On"
+    ShowExitPanel()
     ExitApp
 }
 
